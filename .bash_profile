@@ -46,3 +46,20 @@ complete -W "NSGlobalDomain" defaults;
 
 # Add `killall` tab completion for common apps
 complete -o "nospace" -W "Contacts Calendar Dock Finder Mail Safari iTunes SystemUIServer Terminal Twitter" killall;
+
+# added by Anaconda3 4.2.0 installer
+#export PATH="/Users/panage01/anaconda/bin:$PATH"
+
+# added by http://andykee.com/setting-up-osx-for-python-development.html
+CMD='proj_name=$(basename $VIRTUAL_ENV); cd $PROJECT_HOME/$proj_name'
+FILE=$WORKON_HOME/postactivate
+grep -q -F "$CMD" "$FILE" || echo "$CMD" >> "$FILE"
+
+# Call check_virtualenv in case opening directly into a directory (e.g
+# when opening a new tab in Terminal.app).
+check_virtualenv
+
+# Add the following to ~/.bash_aliases:
+# alias cd="venv_cd"
+
+export PIP_REQUIRE_VIRTUALENV=true

@@ -14,8 +14,13 @@ alias dl="cd ~/Downloads"
 alias dt="cd ~/Desktop"
 alias p="cd ~/projects"
 alias g="git"
+alias gs="git status"
+alias ga="git add ."
+alias gdf="git diff"
+alias gc="git commit -m"
 alias h="history"
 alias j="jobs"
+alias ppath="python -c \"import sys; print('\n'.join(sys.path))\""
 
 # Detect which `ls` flavor is in use
 if ls --color > /dev/null 2>&1; then # GNU `ls`
@@ -60,9 +65,6 @@ alias update='sudo softwareupdate -i -a; brew update; brew upgrade; brew cleanup
 alias ip="dig +short myip.opendns.com @resolver1.opendns.com"
 alias localip="ipconfig getifaddr en0"
 alias ips="ifconfig -a | grep -o 'inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[0-9]\+\)\|[a-fA-F0-9:]\+\)' | awk '{ sub(/inet6? (addr:)? ?/, \"\"); print }'"
-
-# Show active network interfaces
-alias ifactive="ifconfig | pcregrep -M -o '^[^\t:]+:([^\n]|\n\t)*status: active'"
 
 # Flush Directory Service cache
 alias flush="dscacheutil -flushcache && killall -HUP mDNSResponder"
@@ -155,3 +157,60 @@ alias reload="exec $SHELL -l"
 
 # Print each PATH entry on a separate line
 alias path='echo -e ${PATH//:/\\n}'
+
+# Print TTL files with color
+alias pttl='pygmentize -l turtle'
+
+#https://github.com/tcnksm/docker-alias/blob/master/zshrc
+
+alias dmc='docker-machine'
+
+# ------------------------------------
+# Docker alias and function
+# ------------------------------------
+
+# Get latest container ID
+alias dcl="docker ps -l -q"
+
+# Get container process
+alias dcps="docker ps"
+
+# Get process included stop container
+alias dcpa="docker ps -a"
+
+# Get images
+alias dci="docker images"
+
+# Get container IP
+alias dcip="docker inspect --format '{{ .NetworkSettings.IPAddress }}'"
+
+# Run deamonized container, e.g., $dkd base /bin/echo hello
+alias dckd="docker run -d -P"
+
+# Run interactive container, e.g., $dki base /bin/bash
+alias dcki="docker run -i -t -P"
+
+# Execute interactive container, e.g., $dex base /bin/bash
+alias dcex="docker exec -i -t"
+
+# Stop all containers
+dcstop() { docker stop $(docker ps -a -q); }
+
+# Remove all containers
+dcrm() { docker rm $(docker ps -a -q); }
+
+# Stop and Remove all containers
+alias dcrmf='docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q)'
+
+# Remove all images
+dcri() { docker rmi $(docker images -q); }
+
+# Dockerfile build, e.g., $dbu tcnksm/test 
+dcbu() { docker build -t=$1 .; }
+
+# Show all alias related docker
+dcalias() { alias | grep 'docker' | sed "s/^\([^=]*\)=\(.*\)/\1 => \2/"| sed "s/['|\']//g" | sort; }
+
+# Bash into running container
+dcbash() { docker exec -it $(docker ps -aqf "name=$1") bash; }
+
